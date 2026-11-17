@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#101b2d" />
+  <meta name="description" content="Atmos — a real-time weather intelligence dashboard with forecasts, air quality and weather insights." />
+  <title>Atmos — Weather Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#" aria-label="Atmos home">
+        <span class="brand-mark"><span></span><span></span><span></span></span>
+        <span>atmos<span class="brand-period">.</span></span>
+      </a>
+      <div class="side-label">WORKSPACE</div>
+      <button class="nav-item active" data-view="overview"><span class="nav-icon">◫</span> Overview</button>
+      <button class="nav-item" data-view="forecast"><span class="nav-icon">◷</span> Forecast</button>
+      <button class="nav-item" data-view="air"><span class="nav-icon">≋</span> Air quality</button>
+      <div class="side-label locations-label">SAVED LOCATIONS</div>
+      <div id="savedLocations" class="saved-locations">
+        <button class="saved-place active" data-city="Gaya"><span class="place-dot"></span> Gaya <span>•••</span></button>
+        <button class="saved-place" data-city="New Delhi"><span class="place-dot"></span> New Delhi <span>•••</span></button>
+        <button class="saved-place" data-city="Mumbai"><span class="place-dot"></span> Mumbai <span>•••</span></button>
+      </div>
+      <div class="sidebar-bottom">
+        <div class="upgrade-card">
+          <div class="upgrade-icon">✦</div>
+          <strong>See the bigger picture</strong>
+          <p>Atmos brings your weather data together in one clear view.</p>
+          <span class="mini-tag">WEATHER, UNDERSTOOD</span>
+        </div>
+        <div class="profile">
+          <div class="avatar">A</div>
+          <div><strong>Atmos User</strong><small>Personal workspace</small></div>
+          <span class="profile-more">···</span>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div>
+          <div class="eyebrow">TUESDAY, YOUR WEATHER AT A GLANCE</div>
+          <h1>Weather overview</h1>
+        </div>
+        <div class="top-actions">
+          <form class="search-box" id="searchForm">
+            <span class="search-symbol">⌕</span>
+            <input id="citySearch" type="search" placeholder="Search any city..." autocomplete="off" aria-label="Search city" />
+            <kbd>↵</kbd>
+          </form>
+          <button class="icon-button" id="unitToggle" title="Toggle temperature unit" aria-label="Toggle temperature unit">°C</button>
+          <button class="icon-button theme-button" id="themeToggle" title="Toggle theme" aria-label="Toggle theme">◐</button>
+        </div>
+      </header>
+
+      <div class="status-line">
+        <span class="live-dot"></span><span id="updatedAt">Connecting to live weather...</span>
+        <span class="status-divider">/</span><span id="locationLabel">Detecting location</span>
+        <button id="refreshBtn" class="refresh-link">↻ Refresh</button>
+      </div>
+
+      <section class="hero-grid" id="overviewView">
+        <article class="current-card panel">
+          <div class="current-top">
+            <div>
+              <div class="card-kicker">CURRENT WEATHER</div>
+              <h2 id="currentCity">Gaya, India</h2>
+              <p id="currentDate" class="muted">Loading local time...</p>
+            </div>
+            <div class="weather-art" id="mainWeatherIcon" aria-hidden="true">☀️</div>
+          </div>
+          <div class="temperature-row">
+            <div class="temperature" id="currentTemp">--<span>°</span></div>
+            <div class="condition-block">
+              <strong id="currentCondition">Loading weather</strong>
+              <span>Feels like <b id="feelsLike">--°</b></span>
+              <span id="highLow">H: --° &nbsp; L: --°</span>
+            </div>
+          </div>
+          <div class="hero-footer">
+            <div><span class="footer-icon">☀</span><span>Sunrise <b id="sunrise">--:--</b></span></div>
+            <div><span class="footer-icon">◒</span><span>Sunset <b id="sunset">--:--</b></span></div>
+            <div><span class="footer-icon">⌖</span><span id="coordinates">--, --</span></div>
+          </div>
+        </article>
+
+        <article class="insight-card panel">
+          <div class="panel-heading">
+            <div><div class="card-kicker">ATMOSPHERIC SNAPSHOT</div><h3>Today's conditions</h3></div>
+            <span class="heading-icon">✧</span>
+          </div>
+          <div class="metrics-grid">
+            <div class="metric"><div class="metric-top"><span>Humidity</span><span>◌</span></div><strong id="humidity">--<small>%</small></strong><div class="metric-track"><i id="humidityBar"></i></div><small class="metric-note">Relative humidity</small></div>
+            <div class="metric"><div class="metric-top"><span>Wind speed</span><span>↗</span></div><strong id="wind">--<small> km/h</small></strong><div class="metric-track"><i id="windBar"></i></div><small class="metric-note" id="windDirection">Wind conditions</small></div>
+            <div class="metric"><div class="metric-top"><span>Visibility</span><span>◎</span></div><strong id="visibility">--<small> km</small></strong><div class="metric-track"><i id="visibilityBar"></i></div><small class="metric-note">Horizontal visibility</small></div>
+            <div class="metric"><div class="metric-top"><span>Pressure</span><span>⌁</span></div><strong id="pressure">--<small> hPa</small></strong><div class="metric-track"><i id="pressureBar"></i></div><small class="metric-note">Sea-level pressure</small></div>
+          </div>
+        </article>
+      </section>
+
+      <section class="content-grid">
+        <article class="panel forecast-panel">
+          <div class="panel-heading">
+            <div><div class="card-kicker">THE NEXT 24 HOURS</div><h3>Hourly forecast</h3></div>
+            <button class="text-action" data-view="forecast">View forecast ↗</button>
+          </div>
+          <div class="hourly-list" id="hourlyForecast"><div class="skeleton">Loading hourly forecast...</div></div>
+        </article>
+        <article class="panel sun-panel">
+          <div class="panel-heading">
+            <div><div class="card-kicker">DAYLIGHT TRACKER</div><h3>Sunrise & sunset</h3></div>
+            <span class="heading-icon">☼</span>
+          </div>
+          <div class="sun-visual">
+            <div class="sun-path"><div class="sun-orbit"></div><div class="sun-ball">☀</div></div>
+            <div class="sun-times"><div><small>SUNRISE</small><strong id="sunrise2">--:--</strong></div><div class="daylight"><small>DAYLIGHT</small><strong id="daylight">--h --m</strong></div><div><small>SUNSET</small><strong id="sunset2">--:--</strong></div></div>
+          </div>
+          <p class="sun-note">Make the most of the natural light today.</p>
+        </article>
+      </section>
+
+      <section class="panel weekly-panel" id="forecastSection">
+        <div class="panel-heading">
+          <div><div class="card-kicker">PLAN AHEAD</div><h3>7-day forecast</h3></div>
+          <span class="subtle-label">UPCOMING WEATHER</span>
+        </div>
+        <div class="weekly-list" id="weeklyForecast"><div class="skeleton">Loading 7-day forecast...</div></div>
+      </section>
+
+      <section class="bottom-grid" id="airSection">
+        <article class="panel air-panel">
+          <div class="panel-heading">
+            <div><div class="card-kicker">BREATHE BETTER</div><h3>Air quality index</h3></div>
+            <span class="aqi-pill" id="aqiPill">Loading</span>
+          </div>
+          <div class="aqi-main"><div class="aqi-number" id="aqiNumber">--</div><div><strong id="aqiLabel">Air quality</strong><p id="aqiAdvice">Checking the latest air quality data.</p></div></div>
+          <div class="aqi-scale"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          <div class="aqi-scale-labels"><span>Good</span><span>Moderate</span><span>Poor</span><span>Very poor</span></div>
+          <div class="pollutants">
+            <div><small>PM2.5</small><strong id="pm25">-- <small>µg/m³</small></strong></div>
+            <div><small>PM10</small><strong id="pm10">-- <small>µg/m³</small></strong></div>
+            <div><small>Ozone</small><strong id="ozone">-- <small>µg/m³</small></strong></div>
+          </div>
+        </article>
+        <article class="panel recommendation-panel">
+          <div class="panel-heading"><div><div class="card-kicker">A LITTLE WEATHER WISDOM</div><h3>Today's outlook</h3></div><span class="heading-icon">✦</span></div>
+          <div class="recommendation-icon" id="recommendationIcon">☀️</div>
+          <h4 id="recommendationTitle">A good day to get outside</h4>
+          <p id="recommendationText">Your personalized weather insight will appear here once the forecast loads.</p>
+          <div class="recommendation-foot"><span>✧</span> Powered by live weather conditions</div>
+        </article>
+      </section>
+
+      <footer><span>© 2025 Atmos Weather Intelligence</span><span>Clear skies. Clear decisions. <b>✦</b></span><span>Data by Open-Meteo</span></footer>
+    </main>
+  </div>
+  <div id="toast" class="toast" role="status"></div>
+  <script src="script.js"></script>
+</body>
+</html>
